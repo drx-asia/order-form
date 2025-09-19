@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>DRX — Form Pemesanan Jersey (Fixed)</title>
+    <style>
+      :root {
+        --ink: #0b0d14;
+        --muted: #f1f2f4;
+        --line: #d9d9df;
+        --accent: #a0a3ad;
+        --red: #e53935;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        color: #1b1d24;
+        background: white;
+      }
+      .page {
+        max-width: 1200px;
+        margin: 24px auto 64px;
+        padding: 0 20px;
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-start;
+        gap: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .brand img {
+        height: 150px;
+        width: auto;
+        display: block;
+      }
+      .brand-title {
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: var(--ink);
+      }
+
+      .grid-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-left: auto;
+        width: 82%;
+      }
+      .meta-table {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+      }
+      .row label {
+        background: #efeff2;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        color: #4b4e57;
+      }
+      .row input {
+        padding: 8px 14px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+      }
+      .row:last-child label,
+      .row:last-child input {
+        border-bottom: 0;
+      }
+
+      .panel {
+        border: 1.5px solid var(--line);
+        border-radius: 10px;
+        padding: 14px;
+        margin-top: 18px;
+      }
+
+      .upload {
+        position: relative;
+      }
+      .stage-wrap {
+        position: relative;
+        border: 2px dashed #d1d5db;
+        border-radius: 12px;
+        background: #fafafa;
+        overflow: hidden;
+      }
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 420px;
+        overflow: hidden;
+        background: #f8fafc;
+      }
+      .img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        will-change: transform;
+        image-rendering: auto;
+        pointer-events: none;
+      }
+      .hint {
+        position: absolute;
+        inset: 12px auto auto 12px;
+        font-size: 12px;
+        color: #6b7280;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 6px 8px;
+      }
+      .tools {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: flex;
+        gap: 8px;
+      }
+      .tools button {
+        border: 0;
+        background: #111827;
+        color: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 600;
+        min-width: 38px;
+        cursor: pointer;
+      }
+      .tools button:disabled {
+        opacity: 0.5;
+      }
+      .tools .pill {
+        border-radius: 999px;
+        padding: 8px 12px;
+      }
+      .move-active .stage {
+        cursor: grab;
+      }
+      .dragging .stage {
+        cursor: grabbing;
+      }
+      .tools button.active {
+        outline: 2px solid #60a5fa;
+      }
+      .uploader {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+      }
+      .uploader input[type="file"] {
+        display: none;
+      }
+      .uploader label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #111827;
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .small {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .spec {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .spec .col {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .spec .item {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+      }
+      .spec .item div:first-child {
+        background: #efeff2;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        color: #4b4e57;
+      }
+      .spec .item input {
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 10px;
+        font-size: 13px;
+        outline: none;
+      }
+      .spec .item:last-child div:first-child,
+      .spec .item:last-child input {
+        border-bottom: 0;
+      }
+
+      .notes {
+        margin-top: 12px;
+      }
+      .notes textarea {
+        width: 100%;
+        min-height: 140px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px;
+        resize: vertical;
+        font-size: 14px;
+      }
+
+      .sizes {
+        margin-top: 16px;
+      }
+      .sizes .bar {
+        display: grid;
+        grid-template-columns: 60px repeat(8, 1fr) 120px;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .sizes .bar div {
+        padding: 10px;
+        text-align: center;
+        background: #efeff2;
+        font-weight: 600;
+      }
+      .sizes .bar div:nth-child(n + 2):not(:last-child) {
+        border-left: 1px solid var(--line);
+      }
+      .sizes .inputs {
+        display: grid;
+        grid-template-columns: 60px repeat(8, 1fr) 120px;
+        border: 1px solid var(--line);
+        border-top: 0;
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;
+      }
+      .sizes .inputs div {
+        padding: 8px 6px;
+        text-align: center;
+        background: white;
+      }
+      .sizes input[type="number"] {
+        width: 100%;
+        padding: 8px 6px;
+        text-align: center;
+        border: 0;
+        border-left: 1px solid var(--line);
+        outline: none;
+        font-size: 14px;
+      }
+      .sizes .label {
+        background: white;
+        font-weight: 600;
+      }
+
+      .sigs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 18px;
+      }
+      .sig-box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .sig-title {
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .sig-pad {
+        height: 180px;
+        background: #fff;
+        border: 1px dashed #c7cad4;
+        border-radius: 10px;
+        position: relative;
+      }
+      .sig-pad canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .sig-hint {
+        color: var(--red);
+        font-size: 12px;
+        margin-top: 6px;
+        text-align: center;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      button {
+        appearance: none;
+        border: 0;
+        background: var(--ink);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #22242c;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+        .actions {
+          display: none;
+        }
+        .page {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .upload input {
+          display: none;
+        }
+        .hint {
+          display: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .grid-meta {
+          width: 100%;
+          margin-left: 0;
+        }
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .spec {
+          grid-template-columns: 1fr;
+        }
+        .sigs {
+          grid-template-columns: 1fr;
+        }
+        .sizes .bar,
+        .sizes .inputs {
+          grid-template-columns: 40px repeat(8, 1fr) 100px;
+        }
+      }
+
+      /* Make date inputs render with enough room and consistent font */
+      .row input[type="date"] {
+        width: 100%;
+        min-width: 0;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <img
+            alt="DRX"
+            id="drxLogo"
+            src="https://drxasia.id/wp-content/uploads/2024/02/Logo-DRX-fix-06-1.png"
+          />
+        </div>
+        <div class="grid-meta">
+          <div class="meta-table">
+            <div class="row">
+              <label>Nama Pemesan</label><input id="nama_pemesan" type="text" />
+            </div>
+            <div class="row">
+              <label>No.Telp/Whatsapp</label><input id="no_wa" type="text" />
+            </div>
+            <div class="row">
+              <label>Tanggal Order</label><input id="tgl_order" type="date" />
+            </div>
+            <div class="row">
+              <label>Deadline</label><input id="deadline" type="date" />
+            </div>
+          </div>
+          <div class="meta-table">
+            <div class="row">
+              <label>Status</label><input id="status" type="text" />
+            </div>
+            <div class="row">
+              <label>Staff DRX</label><input id="staff" type="text" />
+            </div>
+            <div class="row">
+              <label>Jenis Pesanan</label
+              ><input id="jenis_pesanan" type="text" />
+            </div>
+            <div class="row">
+              <label>Other</label><input id="other" type="text" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- UPLOAD -->
+      <div class="panel">
+        <div class="card upload" id="uploadArea">
+          <div class="stage-wrap">
+            <div class="hint">
+              1) Upload gambar • 2) Klik <b>Move</b> • 3) Drag gambar • Zoom
+              dengan + / − • Double-click untuk Fit
+            </div>
+            <div class="stage" id="stage">
+              <img alt="preview" class="img" id="photo" style="display: none" />
+              <div
+                id="previewPlaceholder"
+                style="
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  font-size: 20px;
+                  color: #6b7280;
+                  font-weight: bold;
+                  text-align: center;
+                "
+              >
+                Preview Jersey
+              </div>
+            </div>
+            <div class="tools">
+              <button id="zoomOut" type="button">−</button>
+              <button id="zoomIn" type="button">+</button>
+              <button class="pill" id="fit" type="button">Fit</button>
+              <button class="pill" id="moveImg" type="button">Move</button>
+            </div>
+          </div>
+          <div class="uploader">
+            <input accept="image/*" id="file" type="file" />
+            <label for="file">Upload Image Design</label>
+            <span class="small">JPG/PNG, saran min 1500px</span>
+          </div>
+        </div>
+      </div>
+      <!-- SPECIFICATION TABLES -->
+      <div class="spec">
+        <div class="col">
+          <div class="item">
+            <div>JENIS BAHAN</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>WARNA BAHAN</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>MODEL POLA</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>MODEL KERAH</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>BAHAN KERAH</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>RIB TANGAN</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>KATEGORI JERSEY</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>SIZING LABEL</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>CARE LABEL</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>HANGTAG</div>
+            <input />
+          </div>
+        </div>
+        <div class="col">
+          <div class="item">
+            <div>NAMA SET</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>FONT NAMA</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>FONT NOMOR</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>LOGO APPAREL</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>LOGO JERSEY</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>AUTHENTIC</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>SPONSOR DEPAN</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>SPONSOR BELAKANG</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>SPONSOR TANGAN KANAN</div>
+            <input />
+          </div>
+          <div class="item">
+            <div>SPONSOR TANGAN KIRI</div>
+            <input />
+          </div>
+        </div>
+      </div>
+      <!-- NOTES -->
+      <div class="notes">
+        <label for="notes"><strong>CATATAN:</strong></label>
+        <textarea
+          id="notes"
+          placeholder="Tambahkan catatan detail produksi…"
+        ></textarea>
+      </div>
+      <!-- SIZE TABLE -->
+      <div class="sizes">
+        <div class="bar">
+          <div>SIZE</div>
+          <div>XS</div>
+          <div>S</div>
+          <div>M</div>
+          <div>L</div>
+          <div>XL</div>
+          <div>2XL</div>
+          <div>3XL</div>
+          <div>4XL</div>
+          <div>TOTAL QTY</div>
+        </div>
+        <div class="inputs">
+          <div class="label">Qty</div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-xs"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-s"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-m"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-l"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-xl"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-2xl"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-3xl"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              class="qty"
+              data-testid="qty-4xl"
+              min="0"
+              type="number"
+              value="0"
+            />
+          </div>
+          <div>
+            <input
+              data-testid="qty-total"
+              id="totalQty"
+              min="0"
+              readonly=""
+              type="number"
+              value="0"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- SIGNATURES -->
+      <div class="sigs">
+        <div class="sig-box">
+          <div class="sig-title">MANAGER PRODUKSI</div>
+          <div class="sig-pad"><canvas id="sig1"></canvas></div>
+          <div class="sig-hint">Tanda tangani di area ini</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-title">CUSTOMER</div>
+          <div class="sig-pad"><canvas id="sig2"></canvas></div>
+          <div class="sig-hint">Tanda tangani di area ini</div>
+        </div>
+      </div>
+      <!-- ACTIONS -->
+      <div class="actions">
+        <button id="btnPdf">EXPORT PDF</button>
+        <button class="secondary" id="btnClearSig">
+          Bersihkan Tanda Tangan
+        </button>
+      </div>
+    </div>
+    <script>
+      // === Upload pan/zoom logic (move-fix) ===
+      (function () {
+        const stage = document.getElementById("stage");
+        const img = document.getElementById("photo");
+        const file = document.getElementById("file");
+        const zoomIn = document.getElementById("zoomIn");
+        const zoomOut = document.getElementById("zoomOut");
+        const fitBtn = document.getElementById("fit");
+        const moveBtn = document.getElementById("moveImg");
+        const area = document.getElementById("uploadArea");
+
+        if (!stage || !img) return;
+
+        const S = {
+          loaded: false,
+          natW: 0,
+          natH: 0,
+          x: 0,
+          y: 0,
+          sx: 0,
+          sy: 0,
+          scale: 1,
+          base: 1,
+          dragging: false,
+          moveMode: false,
+        };
+
+        function apply() {
+          img.style.transform = `translate(${S.x}px, ${S.y}px) translate(-50%,-50%) scale(${S.scale})`;
+        }
+
+        function fitToFrame() {
+          if (!S.loaded) return;
+          const sw = stage.clientWidth,
+            sh = stage.clientHeight;
+          const scale = Math.min(sw / S.natW, sh / S.natH);
+          S.base = scale;
+          S.scale = scale;
+          S.x = 0;
+          S.y = 0;
+          apply();
+        }
+
+        function setMove(on) {
+          S.moveMode = on;
+          if (on) {
+            area.classList.add("move-active");
+            moveBtn.classList.add("active");
+            moveBtn.textContent = "Move (On)";
+          } else {
+            area.classList.remove("move-active");
+            moveBtn.classList.remove("active");
+            moveBtn.textContent = "Move";
+          }
+        }
+
+        function clampScale(next) {
+          const min = S.base * 0.5;
+          const max = S.base * 5;
+          return Math.max(min, Math.min(next, max));
+        }
+
+        zoomIn?.addEventListener("click", () => {
+          S.scale = clampScale(S.scale * 1.15);
+          apply();
+        });
+        zoomOut?.addEventListener("click", () => {
+          S.scale = clampScale(S.scale / 1.15);
+          apply();
+        });
+        fitBtn?.addEventListener("click", fitToFrame);
+        moveBtn?.addEventListener("click", () => setMove(!S.moveMode));
+        stage.addEventListener("dblclick", fitToFrame);
+
+        function pos(e) {
+          return e.touches
+            ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+            : { x: e.clientX, y: e.clientY };
+        }
+        function start(e) {
+          if (!S.loaded || !S.moveMode) return;
+          S.dragging = true;
+          area.classList.add("dragging");
+          const p = pos(e);
+          S.sx = p.x;
+          S.sy = p.y;
+          e.preventDefault();
+        }
+        function move(e) {
+          if (!S.dragging) return;
+          const p = pos(e);
+          S.x += p.x - S.sx;
+          S.y += p.y - S.sy;
+          S.sx = p.x;
+          S.sy = p.y;
+          apply();
+          e.preventDefault();
+        }
+        function end() {
+          if (!S.dragging) return;
+          S.dragging = false;
+          area.classList.remove("dragging");
+        }
+
+        stage.addEventListener("mousedown", start);
+        window.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", end);
+        stage.addEventListener("touchstart", start, { passive: false });
+        window.addEventListener("touchmove", move, { passive: false });
+        window.addEventListener("touchend", end);
+
+        file?.addEventListener("change", (e) => {
+          const f = e.target.files[0];
+          if (!f) return;
+          const url = URL.createObjectURL(f);
+          img.onload = () => {
+            S.loaded = true;
+            S.natW = img.naturalWidth;
+            S.natH = img.naturalHeight;
+            fitToFrame();
+            setMove(false);
+            // show image, hide placeholder
+            var ph = document.getElementById("previewPlaceholder");
+            if (ph) ph.style.display = "none";
+            img.style.display = "block";
+            URL.revokeObjectURL(url);
+          };
+          img.src = url;
+          img.style.pointerEvents = "none";
+          img.setAttribute("draggable", "false");
+        });
+
+        const ro = new ResizeObserver(() => {
+          if (S.loaded) fitToFrame();
+        });
+        ro.observe(stage);
+
+        // Expose state for exports
+        window.__drxStage = stage;
+        window.__drxImg = img;
+        window.__drxImgState = S;
+      })();
+
+      // === Signature pads (draw on canvas) ===
+      (function () {
+        const pads = [
+          document.getElementById("sig1"),
+          document.getElementById("sig2"),
+        ];
+
+        function setupPad(canvas) {
+          const ctx = canvas.getContext("2d");
+          let drawing = false,
+            lastX = 0,
+            lastY = 0;
+
+          function resize() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = Math.floor(rect.width * ratio);
+            canvas.height = Math.floor(rect.height * ratio);
+            ctx.scale(ratio, ratio);
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
+            ctx.lineWidth = 2.2;
+            ctx.strokeStyle = "#0b0d14";
+            // optional: light guide border
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+          }
+
+          function getPos(e) {
+            if (e.touches && e.touches.length) {
+              const t = e.touches[0];
+              const r = canvas.getBoundingClientRect();
+              return { x: t.clientX - r.left, y: t.clientY - r.top };
+            } else {
+              const r = canvas.getBoundingClientRect();
+              return { x: e.clientX - r.left, y: e.clientY - r.top };
+            }
+          }
+
+          function start(e) {
+            e.preventDefault();
+            drawing = true;
+            const p = getPos(e);
+            lastX = p.x;
+            lastY = p.y;
+          }
+
+          function move(e) {
+            if (!drawing) return;
+            e.preventDefault();
+            const p = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            lastX = p.x;
+            lastY = p.y;
+          }
+
+          function end() {
+            drawing = false;
+          }
+
+          // init
+          resize();
+          new ResizeObserver(resize).observe(canvas);
+
+          // mouse
+          canvas.addEventListener("mousedown", start);
+          window.addEventListener("mousemove", move);
+          window.addEventListener("mouseup", end);
+          // touch
+          canvas.addEventListener("touchstart", start, { passive: false });
+          window.addEventListener("touchmove", move, { passive: false });
+          window.addEventListener("touchend", end);
+
+          return {
+            clear: () => {
+              const r = canvas.getBoundingClientRect();
+              const ratio = Math.max(window.devicePixelRatio || 1, 1);
+              ctx.setTransform(1, 0, 0, 1, 0, 0);
+              canvas.width = Math.floor(r.width * ratio);
+              canvas.height = Math.floor(r.height * ratio);
+              ctx.scale(ratio, ratio);
+              ctx.lineJoin = "round";
+              ctx.lineCap = "round";
+              ctx.lineWidth = 2.2;
+              ctx.strokeStyle = "#0b0d14";
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+            },
+          };
+        }
+
+        const controllers = pads.map(setupPad);
+
+        // Clear button clears all pads
+        const clearBtn = document.getElementById("btnClearSig");
+        clearBtn?.addEventListener("click", () =>
+          controllers.forEach((c) => c.clear())
+        );
+      })();
+
+      // === Auto-sum total qty ===
+      (function () {
+        const qtyInputs = Array.from(document.querySelectorAll(".qty"));
+        const total = document.getElementById("totalQty");
+        function recalc() {
+          const sum = qtyInputs.reduce(
+            (acc, el) => acc + (parseInt(el.value || "0", 10) || 0),
+            0
+          );
+          if (total) total.value = sum;
+        }
+        qtyInputs.forEach((el) => el.addEventListener("input", recalc));
+        recalc();
+      })();
+
+      // === Export: PDF (print) and CSV ===
+      (function () {
+        // Export to PDF using browser's print-to-PDF
+        document.getElementById("btnPdf")?.addEventListener("click", () => {
+          window.print();
+        });
+
+        // Build CSV for Google Sheets import
+        document.getElementById("btnCsv")?.addEventListener("click", () => {
+          // Collect meta fields
+          const meta = {
+            "Nama Pemesan":
+              document.getElementById("nama_pemesan")?.value || "",
+            "No.Telp/Whatsapp": document.getElementById("no_wa")?.value || "",
+            "Tanggal Order": document.getElementById("tgl_order")?.value || "",
+            Deadline: document.getElementById("deadline")?.value || "",
+            Status: document.getElementById("status")?.value || "",
+            "Staff DRX": document.getElementById("staff")?.value || "",
+            "Jenis Pesanan":
+              document.getElementById("jenis_pesanan")?.value || "",
+            Other: document.getElementById("other")?.value || "",
+            Catatan: document.getElementById("notes")?.value || "",
+          };
+
+          // Collect sizes
+          const sizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"];
+          const sizeVals = sizes.map((_, i) => {
+            const el = document.querySelectorAll(".qty")[i];
+            return el ? el.value || "0" : "0";
+          });
+          const total = document.getElementById("totalQty")?.value || "0";
+
+          // Build CSV rows
+          const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
+          const rows = [];
+          rows.push(["Field", "Value"]);
+          for (const k in meta) {
+            rows.push([k, meta[k]]);
+          }
+          rows.push([]);
+          rows.push(["SIZE", ...sizes, "TOTAL"]);
+          rows.push(["Qty", ...sizeVals, total]);
+
+          const csv = rows.map((r) => r.map(esc).join(",")).join("\r\n");
+
+          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "drx_order_form.csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      })();
+
+      // === Export: JPG & SVG of the Stage ===
+      (function () {
+        const stage = window.__drxStage;
+        const img = window.__drxImg;
+        const S = window.__drxImgState;
+
+        function ensureReady() {
+          if (!stage || !img || !S || !S.loaded) {
+            alert("Mohon upload gambar terlebih dahulu sebelum export.");
+            return false;
+          }
+          return true;
+        }
+
+        function downloadBlob(blob, filename) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        // Export JPG of current stage (what you see in the gray box)
+        document.getElementById("btnJpg")?.addEventListener("click", () => {
+          if (!ensureReady()) return;
+          const sw = stage.clientWidth,
+            sh = stage.clientHeight;
+          const canvas = document.createElement("canvas");
+          canvas.width = sw;
+          canvas.height = sh;
+          const ctx = canvas.getContext("2d");
+
+          // white background (so JPG doesn't become black/transparent)
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, sw, sh);
+
+          // Translate to stage center + current pan; then scale; then draw at -natW/2, -natH/2
+          ctx.translate(sw / 2 + (S.x || 0), sh / 2 + (S.y || 0));
+          ctx.scale(S.scale || 1, S.scale || 1);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(
+            img,
+            -(S.natW || img.naturalWidth) / 2,
+            -(S.natH || img.naturalHeight) / 2
+          );
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                alert("Gagal membuat JPG.");
+                return;
+              }
+              downloadBlob(blob, "drx_stage.jpg");
+            },
+            "image/jpeg",
+            0.92
+          );
+        });
+
+        // Export SVG of current stage (raster image embedded in SVG, with same pan/zoom)
+        document.getElementById("btnSvg")?.addEventListener("click", () => {
+          if (!ensureReady()) return;
+          const sw = stage.clientWidth,
+            sh = stage.clientHeight;
+          const natW = S.natW || img.naturalWidth;
+          const natH = S.natH || img.naturalHeight;
+
+          // Use current img source; if it's a blob URL we can embed as data URL via canvas fallback
+          function buildAndDownload(svgHref) {
+            const xmlns = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(xmlns, "svg");
+            svg.setAttribute("xmlns", xmlns);
+            svg.setAttribute("width", String(sw));
+            svg.setAttribute("height", String(sh));
+            svg.setAttribute("viewBox", `0 0 ${sw} ${sh}`);
+
+            // white background rect
+            const bg = document.createElementNS(xmlns, "rect");
+            bg.setAttribute("x", "0");
+            bg.setAttribute("y", "0");
+            bg.setAttribute("width", String(sw));
+            bg.setAttribute("height", String(sh));
+            bg.setAttribute("fill", "#ffffff");
+            svg.appendChild(bg);
+
+            const image = document.createElementNS(xmlns, "image");
+            image.setAttributeNS(
+              "http://www.w3.org/1999/xlink",
+              "href",
+              svgHref
+            );
+            image.setAttribute("width", String(natW));
+            image.setAttribute("height", String(natH));
+
+            // Compose same transform: translate(center + pan) scale(scale) translate(-natW/2, -natH/2)
+            const tx = sw / 2 + (S.x || 0);
+            const ty = sh / 2 + (S.y || 0);
+            const sc = S.scale || 1;
+            image.setAttribute(
+              "transform",
+              `translate(${tx} ${ty}) scale(${sc}) translate(${-natW / 2} ${
+                -natH / 2
+              })`
+            );
+
+            svg.appendChild(image);
+
+            const serializer = new XMLSerializer();
+            const svgText = serializer.serializeToString(svg);
+            const blob = new Blob([svgText], {
+              type: "image/svg+xml;charset=utf-8",
+            });
+            downloadBlob(blob, "drx_stage.svg");
+          }
+
+          // Try to use the current src directly if it's a data: URL.
+          if (img.currentSrc && img.currentSrc.startsWith("data:")) {
+            buildAndDownload(img.currentSrc);
+          } else {
+            // Convert current image into a data URL via a temp canvas (works for local blob URLs)
+            try {
+              const c = document.createElement("canvas");
+              c.width = natW;
+              c.height = natH;
+              const cctx = c.getContext("2d");
+              cctx.drawImage(img, 0, 0);
+              const dataURL = c.toDataURL("image/png");
+              buildAndDownload(dataURL);
+            } catch (e) {
+              alert(
+                "Tidak bisa membuat SVG karena batasan keamanan gambar lintas-origin."
+              );
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
